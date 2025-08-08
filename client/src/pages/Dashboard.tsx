@@ -1,18 +1,34 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { api } from '../api';
 
 export default function Dashboard() {
   const [mood, setMood] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleMood = (e: React.FormEvent) => {
+  const handleMood = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: call API
-    setMood('');
+    try {
+      await api('/mood', {
+        method: 'POST',
+        body: JSON.stringify({ mood }),
+      });
+      setMood('');
+      setSuccess('Mood logged!');
+      setError('');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to log mood';
+      setError(msg);
+      setSuccess('');
+    }
   };
 
   return (
     <div className="max-w-4xl mx-auto px-4">
       <h2 className="text-2xl font-semibold mb-6">Dashboard</h2>
+      {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
+      {success && <p className="text-green-600 text-sm mb-2">{success}</p>}
       <form onSubmit={handleMood} className="flex gap-2 mb-6">
         <input
           className="border rounded p-2 flex-1"

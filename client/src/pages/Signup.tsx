@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { api } from '../api';
 
 export default function Signup() {
   const [username, setUsername] = useState('');
@@ -7,10 +8,20 @@ export default function Signup() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  const [error, setError] = useState('');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: call API
-    navigate('/login');
+    try {
+      await api('/signup', {
+        method: 'POST',
+        body: JSON.stringify({ username, email, password }),
+      });
+      navigate('/login');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Signup failed';
+      setError(msg);
+    }
   };
 
   return (
@@ -18,6 +29,7 @@ export default function Signup() {
       <div className="bg-white shadow-md rounded px-8 py-6 w-full max-w-md">
         <h2 className="text-2xl font-semibold mb-4 text-center">Sign Up</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          {error && <p className="text-red-600 text-sm">{error}</p>}
           <input
             className="border rounded p-2"
             placeholder="Username"
