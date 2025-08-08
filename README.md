@@ -20,4 +20,4 @@ npm install
 npm run dev
 ```
 
-The client expects the API to be served from `VITE_API_URL` (default `http://localhost:5000/api`).
+The client expects the API to be served from `VITE_API_URL` (default `http://localhost:5008/api`).
