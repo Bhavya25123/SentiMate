@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { api } from '../api';
 
 type Message = { sender: 'user' | 'bot'; text: string };
 
@@ -6,11 +7,22 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
 
-  const handleSend = (e: React.FormEvent) => {
+  const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input) return;
-    setMessages([...messages, { sender: 'user', text: input }, { sender: 'bot', text: "I'm here for you." }]);
+    const userMessage = input;
+    setMessages([...messages, { sender: 'user', text: userMessage }]);
     setInput('');
+    try {
+      const data = await api('/chat', {
+        method: 'POST',
+        body: JSON.stringify({ message: userMessage }),
+      });
+      setMessages(prev => [...prev, { sender: 'bot', text: data.response }]);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error sending message';
+      setMessages(prev => [...prev, { sender: 'bot', text: msg }]);
+    }
   };
 
   return (
