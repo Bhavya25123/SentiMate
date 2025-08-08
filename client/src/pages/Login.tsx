@@ -1,0 +1,26 @@
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: call API
+    navigate('/dashboard');
+  };
+
+  return (
+    <div className="p-4 max-w-md mx-auto">
+      <h2 className="text-2xl mb-4">Login</h2>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+        <input className="border p-2" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} />
+        <input className="border p-2" type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} />
+        <button className="bg-blue-500 text-white p-2" type="submit">Login</button>
+      </form>
+      <p className="mt-2 text-sm">No account? <Link to="/signup" className="text-blue-500">Sign up</Link></p>
+    </div>
+  );
+}
